@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Descuento de Manzanas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .subtitulo {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      font-size: 13px;
+      color: #666;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      transition: border 0.2s;
+      margin-bottom: 12px;
+    }
+
+    input[type="number"]:focus {
+      border-color: #4a7c59;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #4a7c59;
+      color: white;
+      font-size: 15px;
+      font-weight: 500;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover { background: #3b6347; }
+    button:active { background: #2e4e38; }
+
+    .resultado {
+      display: none;
+      margin-top: 1.5rem;
+      background: #f9f9f7;
+      border: 1px solid #e5e5e0;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+    }
+
+    .resultado.visible { display: block; }
+
+    .resultado .label {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 14px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+
+    .badge-success { background: #e6f4ec; color: #2e7d4f; }
+    .badge-warning { background: #fff4e0; color: #a05c00; }
+    .badge-none    { background: #f0f0ec; color: #666; }
+
+    .res-texto {
+      font-size: 15px;
+      color: #333;
+      margin-top: 4px;
+    }
+
+    .tabla {
+      margin-top: 1.5rem;
+      background: #f5f5f0;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+    }
+
+    .tabla-titulo {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .tier-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid #e5e5e0;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .tier-row:last-child { border-bottom: none; }
+
+    .tier-kg {
+      min-width: 90px;
+      font-weight: 600;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Descuento de manzanas</h1>
+    <p class="subtitulo">Ingresá la cantidad en kg para ver tu descuento.</p>
+
+    <label for="kg-input">Cantidad de kg de manzanas</label>
+    <input type="number" id="kg-input" min="0" step="0.1" placeholder="Ej: 3.5" oninput="calcular()" />
+    <button onclick="calcular()">Calcular descuento</button>
+
+    <div id="resultado" class="resultado">
+      <p class="label">Resultado para <span id="res-kg" style="font-weight:600; color:#333;"></span> kg</p>
+      <span id="res-badge" class="badge"></span>
+      <p id="res-texto" class="res-texto"></p>
+    </div>
+
+    <div class="tabla">
+      <p class="tabla-titulo">Tabla de descuentos</p>
+      <div class="tier-row"><span class="tier-kg">Hasta 2 kg</span><span>Sin descuento</span></div>
+      <div class="tier-row"><span class="tier-kg">2 a 5 kg</span><span>10% de descuento</span></div>
+      <div class="tier-row"><span class="tier-kg">5 a 10 kg</span><span>15% de descuento</span></div>
+      <div class="tier-row"><span class="tier-kg">Más de 10 kg</span><span>20% de descuento</span></div>
+    </div>
+  </div>
+
+  <script>
+    function calcular() {
+      var val = parseFloat(document.getElementById('kg-input').value);
+      var res = document.getElementById('resultado');
+      var badge = document.getElementById('res-badge');
+      var texto = document.getElementById('res-texto');
+      var resKg = document.getElementById('res-kg');
+
+      if (isNaN(val) || val <= 0) { res.classList.remove('visible'); return; }
+
+      resKg.textContent = val.toFixed(1);
+      res.classList.add('visible');
+
+      if (val > 2 && val < 5) {
+        badge.textContent = '10% de descuento';
+        badge.className = 'badge badge-success';
+        texto.textContent = 'Tenés un descuento del 10%.';
+      } else if (val >= 5 && val < 10) {
+        badge.textContent = '15% de descuento';
+        badge.className = 'badge badge-success';
+        texto.textContent = 'Tenés un descuento del 15%.';
+      } else if (val >= 10) {
+        badge.textContent = '20% de descuento';
+        badge.className = 'badge badge-warning';
+        texto.textContent = 'Tenés un descuento del 20%.';
+      } else {
+        badge.textContent = 'Sin descuento';
+        badge.className = 'badge badge-none';
+        texto.textContent = 'No tenés descuento con esa cantidad.';
+      }
+    }
+  </script>
+</body>
+</html>
